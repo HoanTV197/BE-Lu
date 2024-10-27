@@ -25,10 +25,14 @@ public class CertificationValidator {
 
     /**
      * Kiểm tra xem thông tin chứng chỉ có được cung cấp không.
+     * Nếu tất cả các trường của chứng chỉ đều rỗng hoặc null thì bỏ qua.
      */
     private boolean isCertificationProvided(CertificationRequest cert) {
-        return !(isEmpty(String.valueOf(cert.getCertificationId())) && isEmpty(cert.getCertificationDate())
-                && isEmpty(cert.getExpirationDate()) && isEmpty(String.valueOf(cert.getScore())));
+        // Kiểm tra nếu có bất kỳ trường nào trong chứng chỉ được cung cấp
+        return (cert.getCertificationId() != null && cert.getCertificationId() > 0)
+                || (cert.getCertificationDate() != null && !cert.getCertificationDate().isEmpty())
+                || (cert.getExpirationDate() != null && !cert.getExpirationDate().isEmpty())
+                || (cert.getScore() != null && cert.getScore() > 0);
     }
 
     /**

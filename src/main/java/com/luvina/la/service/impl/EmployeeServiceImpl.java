@@ -151,10 +151,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = optionalEmployee.get();
 
         // 2. Kiểm tra nếu employeeLoginId thay đổi và có trùng lặp với nhân viên khác
-        if (!employee.getEmployeeLoginId().equals(employeeRequest.getEmployeeLoginId())) {
-            if (employeeRepository.existsByEmployeeLoginIdAndEmployeeIdNot(employeeRequest.getEmployeeLoginId(), employee.getEmployeeId())) {
-                return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, new ResponseDTO.Message(Constants.ER003, new Object[]{"アカウント名"}));
-            }
+        if (!employee.getEmployeeLoginId().equals(employeeRequest.getEmployeeLoginId())
+                && employeeRepository.existsByEmployeeLoginIdAndEmployeeIdNot(employeeRequest.getEmployeeLoginId(), employee.getEmployeeId())) {
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, new ResponseDTO.Message(Constants.ER003, new Object[]{"アカウント名"}));
         }
 
         // 3. Cập nhật thông tin nhân viên
@@ -179,34 +178,43 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 5. Cập nhật thông tin nhân viên
         employeeRepository.save(employee);
 
-        // 6. Xóa chứng chỉ hiện có và thêm mới (nếu có)
+        // 6. Xóa chứng chỉ hiện có
         employeeCertificationRepository.deleteByEmployeeId(employee.getEmployeeId());
         List<EmployeeCertification> employeeCertifications = new ArrayList<>();
-        if (employeeRequest.getCertifications() != null) {
+
+
+        //7.  Kiểm tra nếu certifications không null và không rỗng
+        if (employeeRequest.getCertifications() != null && !employeeRequest.getCertifications().isEmpty()) {
             for (var certReq : employeeRequest.getCertifications()) {
+                // Kiểm tra validate chứng chỉ chỉ khi có chứng chỉ
                 ResponseDTO certValidation = certificationValidator.validateCertification(certReq);
                 if (certValidation != null) {
                     return certValidation;  // Trả về lỗi nếu có từ validate chứng chỉ
                 }
 
-                Optional<Certification> certificationOptional = certificationsRepository.findById(certReq.getCertificationId());
-                if (!certificationOptional.isPresent()) {
-                    return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, new ResponseDTO.Message(Constants.ER004, new Object[]{"資格"}));
+                // Kiểm tra nếu certificationId không null và không rỗng
+                if (certReq.getCertificationId() != null && certReq.getCertificationId() > 0) {
+                    Optional<Certification> certificationOptional = certificationsRepository.findById(certReq.getCertificationId());
+                    if (!certificationOptional.isPresent()) {
+                        return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, new ResponseDTO.Message(Constants.ER004, new Object[]{"資格"}));
+                    }
+                    EmployeeCertification employeeCertification = new EmployeeCertification();
+                    employeeCertification.setEmployee(employee);
+                    employeeCertification.setCertification(certificationOptional.get());
+                    employeeCertification.setStartDate(java.sql.Date.valueOf(certReq.getCertificationDate()));
+                    employeeCertification.setEndDate(java.sql.Date.valueOf(certReq.getExpirationDate()));
+                    employeeCertification.setScore(BigDecimal.valueOf(certReq.getScore()));
+                    employeeCertifications.add(employeeCertification);
                 }
-                EmployeeCertification employeeCertification = new EmployeeCertification();
-                employeeCertification.setEmployee(employee);
-                employeeCertification.setCertification(certificationOptional.get());
-                employeeCertification.setStartDate(java.sql.Date.valueOf(certReq.getCertificationDate()));
-                employeeCertification.setEndDate(java.sql.Date.valueOf(certReq.getExpirationDate()));
-                employeeCertification.setScore(BigDecimal.valueOf(certReq.getScore()));
-                employeeCertifications.add(employeeCertification);
             }
+
             employeeCertificationRepository.saveAll(employeeCertifications);
         }
 
-        // 7. Trả về phản hồi thành công
+        // 8. Trả về phản hồi thành công
         return new ResponseDTO(HttpStatus.OK.value(), employee.getEmployeeId(), new ResponseDTO.Message(Constants.MSG002, new Object[]{}));
     }
+
 
 
     /**
@@ -334,8 +342,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             // 3. Xóa thông tin của nhân viên
             employeeRepository.deleteById(employeeId);
         } catch (Exception e) {
-            // Rollback transaction nếu có lỗi xảy ra và ném ra lỗi nghiệp vụ
-            throw new BusinessException(Constants.ER015, new Object[]{});
+            // Rollback transaction nếu có lỗi xảy ra và ném ra lỗi nghiệp vụ, không dùng throw new
+            throw new BusinessException(Constants.ER015, new Object[]{"ＩＤ"});
+
         }
     }
 

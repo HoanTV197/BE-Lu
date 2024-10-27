@@ -110,9 +110,16 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(validationResponse);
         }
 
-        // Gọi service để thêm mới nhân viên và nhận về ResponseDTO
-        ResponseDTO response = employeeService.addEmployee(employeeRequest);
-        return ResponseEntity.status(response.getCode()).body(response);
+        try {
+            // Gọi service để thêm mới nhân viên và nhận về ResponseDTO
+            ResponseDTO response = employeeService.addEmployee(employeeRequest);
+            return ResponseEntity.status(response.getCode()).body(response);
+        } catch (Exception ex){
+            // xử lý lỗi chung hệ thống ER015 - Lỗi hệ thống
+            ResponseDTO errorResponse = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
+                    new ResponseDTO.Message(Constants.ER015, new Object[]{}));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
 
