@@ -28,7 +28,8 @@ public class Employee implements Serializable {
      * ID của nhân viên (Primary Key).
      */
     @Id
-    @Column(name = "employee_id", unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Sử dụng auto-increment
+    @Column(name = "employee_id", unique = true, nullable = false)
     private Long employeeId;
 
     /**
@@ -85,4 +86,6 @@ public class Employee implements Serializable {
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<EmployeeCertification> employeeCertifications;
+
+
 }

@@ -6,7 +6,6 @@
 package com.luvina.la.service.impl;
 
 import com.luvina.la.dto.DepartmentDTO;
-import com.luvina.la.entity.Department;
 import com.luvina.la.repository.DepartmentRepository;
 import com.luvina.la.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<DepartmentDTO> getAllDepartments() {
         // Chuyển đổi Entity thành DTO
         return departmentRepository.findAll().stream()
+                // Ánh xạ từ Department sang DepartmentDTO
                 .map(department -> new DepartmentDTO(department.getDepartmentId(), department.getDepartmentName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // Chuyển List<DepartmentDTO>
     }
 }

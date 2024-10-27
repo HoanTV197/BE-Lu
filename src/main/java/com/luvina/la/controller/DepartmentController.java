@@ -57,7 +57,7 @@ public class DepartmentController {
             // Tạo thông báo lỗi sử dụng hằng số từ class Constants và trả về mã lỗi 500
             ErrorMessage errorMessage = new ErrorMessage(Constants.ER023, new Object[]{});
             ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), errorMessage);
-            return ResponseEntity.status(500).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }

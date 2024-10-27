@@ -42,6 +42,10 @@ public class SecurityConfiguration {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Cấu hình PasswordEncoder để mã hóa mật khẩu
+     * @return PasswordEncoder sử dụng thuật toán BCrypt
+     */
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();

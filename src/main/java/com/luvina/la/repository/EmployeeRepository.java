@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 /**
@@ -61,4 +60,26 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
      * @return Nhân viên tìm được
      */
     Optional<Employee> findByEmployeeLoginId(String username);
+
+    /**
+     * Kiểm tra sự tồn tại của nhân viên theo id nhân viên.
+     * @param employeeLoginId id nhân viên
+     * @return  true nếu tồn tại, ngược lại trả về false
+     */
+    boolean existsByEmployeeLoginId(String employeeLoginId);
+
+    // Kiểm tra xem employeeLoginId có trùng với employeeId khác hay không
+    boolean existsByEmployeeLoginIdAndEmployeeIdNot(String employeeLoginId, Long employeeId);
+
+    /**
+     * Tìm kiếm nhân viên theo id nhân viên và join với bảng Department.
+     * @param employeeId
+     * @return Nhân viên tìm được
+     */
+    @Query("SELECT e FROM Employee e JOIN FETCH e.department WHERE e.employeeId = :employeeId")
+    Optional<Employee> findEmployeeWithDepartmentById(@Param("employeeId") Long employeeId);
+
+    // Kiểm tra sự tồn tại của nhân viên theo id nhân viên
+    boolean existsById(Long employeeId);
+
 }

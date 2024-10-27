@@ -17,7 +17,7 @@ public class EmployeeDTO implements Serializable {
     // Định dạng ngày sinh đúng chuẩn yyyy/MM/dd
     private String employeeBirthDate;
     private String departmentName;
-
+    private String employeeNameKana;
     private String employeeEmail;
     private String employeeTelephone;
     private String certificationName;
@@ -33,5 +33,9 @@ public class EmployeeDTO implements Serializable {
         if (date == null) return null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         return formatter.format(date);
+    }
+
+
+    public void setEmployeeLoginId(String employeeLoginId) {
     }
 }
