@@ -22,17 +22,6 @@ import java.util.List;
 public interface EmployeeCertificationRepository extends JpaRepository<EmployeeCertification, Long> {
 
     /**
-     * Tìm kiếm danh sách chứng chỉ của nhân viên theo id nhân viên.
-     * @param employeeId
-     * @return Danh sách chứng chỉ của nhân viên
-     */
-    @Query(value = "SELECT ec.* FROM employees_certifications ec " +
-            "JOIN employees e ON ec.employee_id = e.employee_id " +
-            "WHERE ec.employee_id = :employeeId",
-            nativeQuery = true)
-    List<EmployeeCertification> findByEmployeeId(@Param("employeeId") Long employeeId);
-
-    /**
      * Xóa danh sách chứng chỉ của nhân viên theo id nhân viên.
      * @param employeeId
      */

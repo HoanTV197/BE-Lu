@@ -160,4 +160,22 @@ public class EmployeeValidator {
             return false;
         }
     }
+
+
+    /**
+     * Validate employeeId cho cho get detail
+     * @param employeeId
+     * @return
+     */
+    public ResponseDTO validateEmployeeId(Long employeeId) {
+        if (employeeId == null) {
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
+                    new ResponseDTO.Message(Constants.ER001, new Object[]{"ＩＤ"}));
+        }
+        if (!employeeRepository.existsById(employeeId)) {
+            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
+                    new ResponseDTO.Message(Constants.ER013, new Object[]{"ＩＤ"}));
+        }
+        return null;
+    }
 }

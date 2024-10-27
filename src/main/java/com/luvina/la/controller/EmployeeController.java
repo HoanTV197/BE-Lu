@@ -144,6 +144,8 @@ public class EmployeeController {
      */
     @GetMapping("/employees/{id}")
     public ResponseEntity<?> getEmployeeDetail(@PathVariable("id") Long employeeId) {
+        //validate employeeId
+        ResponseDTO validationResponse = employeeValidator.validateEmployeeId(employeeId);
         try {
             EmployeeDetailDTO employeeDetail = employeeService.getEmployeeDetail(employeeId);
             return ResponseEntity.ok(employeeDetail);
@@ -167,7 +169,7 @@ public class EmployeeController {
             employeeService.deleteEmployee(employeeId);
 
             // Chuẩn bị response trả về khi thành công
-            EmployeeDeleteResponse.Message message = new EmployeeDeleteResponse.Message("MSG003", new Object[]{});
+            EmployeeDeleteResponse.Message message = new EmployeeDeleteResponse.Message(Constants.MSG003, new Object[]{});
             EmployeeDeleteResponse response = new EmployeeDeleteResponse();
             response.setCode(HttpStatus.OK.value());
             response.setEmployeeId(employeeId);

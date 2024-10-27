@@ -62,7 +62,7 @@ public class CertificationValidator {
 
         // 3. Validate score
         if (cert.getScore() == null || cert.getScore() <= 0) {
-            return new ResponseDTO(500, null, new ResponseDTO.Message(Constants.ER001, new Object[]{"点数"}));
+            return new ResponseDTO(500, null, new ResponseDTO.Message(Constants.ER018, new Object[]{"点数"}));
         }
 
         // 4. Validate certificationId

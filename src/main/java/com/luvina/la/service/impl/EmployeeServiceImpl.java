@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    //
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -277,7 +276,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeOptional.get();
 
         // 2. Lấy danh sách chứng chỉ của nhân viên
-        List<EmployeeCertification> certifications = employeeCertificationRepository.findByEmployeeId(employeeId);
+        List<EmployeeCertification> certifications = employee.getEmployeeCertifications();
 
         // 3. Tạo EmployeeDetailDTO và điền dữ liệu
         EmployeeDetailDTO detailDTO = new EmployeeDetailDTO();
