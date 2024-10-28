@@ -115,7 +115,6 @@ public class EmployeeController {
             ResponseDTO response = employeeService.addEmployee(employeeRequest);
             return ResponseEntity.status(response.getCode()).body(response);
         } catch (Exception ex){
-            // xử lý lỗi chung hệ thống ER015 - Lỗi hệ thống
             ResponseDTO errorResponse = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
                     new ResponseDTO.Message(Constants.ER015, new Object[]{}));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
@@ -136,9 +135,15 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(validationResponse);
         }
 
-        // Gọi service để chỉnh sửa nhân viên
-        ResponseDTO response = employeeService.editEmployee(employeeRequest);
-        return ResponseEntity.status(response.getCode()).body(response);
+        try {
+            // Gọi service để chỉnh sửa nhân viên
+            ResponseDTO response = employeeService.editEmployee(employeeRequest);
+            return ResponseEntity.status(response.getCode()).body(response);
+        } catch (Exception e) {
+            ResponseDTO errorResponse = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
+                    new ResponseDTO.Message(Constants.ER015, new Object[]{}));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
 
@@ -156,11 +161,10 @@ public class EmployeeController {
         try {
             EmployeeDetailDTO employeeDetail = employeeService.getEmployeeDetail(employeeId);
             return ResponseEntity.ok(employeeDetail);
-        } catch (BusinessException ex) {
-            // Xử lý lỗi và trả về response với thông tin lỗi
-            ErrorMessage errorMessage = new ErrorMessage(ex.getErrorCode(), ex.getParams());
-            ErrorResponse errorResponse = new ErrorResponse("500", errorMessage);
-            return ResponseEntity.status(500).body(errorResponse);
+        } catch (Exception ex) {
+           ResponseDTO errorResponse = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), null,
+                   new ResponseDTO.Message(Constants.ER015, new Object[]{}));
+              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
